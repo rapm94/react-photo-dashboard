@@ -1,12 +1,21 @@
-import {configureStore} from '@reduxjs/toolkit';
-import {searchTermSlice} from '../reducers/searchTermSlice';
-import {downloadedPhotosSlice} from '../reducers/downloadedPhotosSlice';
-import {searchedPhotosSlice} from '../reducers/searchedPhotosSlice';
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
+import {searchTermReducer} from '../reducers/searchTermSlice';
+import {downloadedPhotosReducer} from '../reducers/myPhotosSlice';
+import {searchedPhotosReducer} from '../reducers/searchedPhotosSlice';
 
-export const store = configureStore({
-    reducer: {
-        searchTerm: searchTermSlice,
-        downloadedPhotos: downloadedPhotosSlice,
-        searchedPhotos: searchedPhotosSlice
-    }
+
+const rootReducer = combineReducers({
+    searchTerm: searchTermReducer,
+    downloadedPhotos: downloadedPhotosReducer,
+    searchedPhotos: searchedPhotosReducer
+    });
+
+const store = configureStore({
+    reducer: rootReducer
 });
+
+store.subscribe(() => {
+    localStorage.setItem('reduxState', JSON.stringify(store.getState()));
+});
+
+export default store;

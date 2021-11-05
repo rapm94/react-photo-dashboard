@@ -1,7 +1,7 @@
 import TextField from '@mui/material/TextField';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import {Grid, ImageList, ImageListItem, ImageListItemBar} from '@mui/material';
+import {Grid, ImageList, ImageListItem, ImageListItemBar, Button} from '@mui/material';
 
 export function MyPhotosPage() {
 
@@ -22,9 +22,7 @@ export function MyPhotosPage() {
                                 loading="lazy"/>
                             <ImageListItemBar
                                 title={item.title}
-                                subtitle={< span > by : {
-                                item.author
-                            } </span>}
+                                subtitle={<Button>Add to my Photos</Button>}
                                 position="below"/>
                         </ImageListItem>
                     ))}

@@ -8,7 +8,7 @@ import {MyPhotosPage} from '../pages/photos-page';
 
 function App() {
     return (
-        <div className="App">
+        <>
             <header>
                 <Grid container p={5}>
                     <Container>
@@ -35,8 +35,8 @@ function App() {
                 </Routes>
 
             </body>
-        </div>
-    );
+            </> 
+        );
 }
 
 export default App;
