@@ -1,12 +1,12 @@
-import {configureStore, combineReducers} from '@reduxjs/toolkit';
-import {searchTermReducer} from '../reducers/searchTermSlice';
-import {downloadedPhotosReducer} from '../reducers/myPhotosSlice';
-import {searchedPhotosReducer} from '../reducers/searchedPhotosSlice';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { searchTermReducer } from '../reducers/searchTermSlice';
+import { myPhotosReducer } from '../reducers/myPhotosSlice';
+import { searchedPhotosReducer } from '../reducers/searchedPhotosSlice';
 
 
 const rootReducer = combineReducers({
     searchTerm: searchTermReducer,
-    downloadedPhotos: downloadedPhotosReducer,
+    myPhotos: myPhotosReducer,
     searchedPhotos: searchedPhotosReducer
     });
 

@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
-import {TextField, ImageList, ImageListItem, ImageListItemBar, Button, Stack, Grid, Container} from '@mui/material';
+import { TextField, ImageList, ImageListItem, ImageListItemBar, Button, Stack, Grid, Container } from '@mui/material';
 import { photosSelector } from '../reducers/searchedPhotosSlice';
 import { setSearchTerm } from '../reducers/searchTermSlice';
 import { fetchPhotos } from '../reducers/searchedPhotosSlice';
+import { addPhoto } from '../reducers/myPhotosSlice';
 
 
 export function SearchPage () {
@@ -18,7 +19,8 @@ export function SearchPage () {
     }
 
     const handleSavePhoto = (image) => {
-        console.log(image);
+      dispatch(addPhoto(image));
+      console.log(image);
     }
     return (
         <>
@@ -51,7 +53,7 @@ export function SearchPage () {
                         <ImageListItemBar
                             title={image.id}
                             subtitle={image.alt}
-                            actionIcon={<Button variant='contained' style={{backgroundColor: image.color}} sx={{mx: 2}} >Add to my photos</Button>}
+                            actionIcon={<Button variant='contained' style={{backgroundColor: image.color}} sx={{mx: 2}} onClick={() =>handleSavePhoto(image)}>Add to my photos</Button>}
                         />
                     </ImageListItem>))}
                 </ImageList>

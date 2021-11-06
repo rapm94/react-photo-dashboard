@@ -1,28 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-
-const initialState = {
-  photos: [],
-  loading: false,
-  error: null,
-};
-
-
 const myPhotosSlice = createSlice({
     name: 'myPhotos',
-    initialState,
+    initialState: {
+        myPhotos: [],
+    },
     reducers: {
-        setPhotos: (state, action) => {
-            state.photos = action.payload;
+        hydrateMyPhotos: (action) => {
+           return action.payload;
         },
-        removeOnePhoto: (state, action) => {
-            state.photos = state.photos.filter(photo => photo.id !== action.payload);
+        addPhoto: (state, action) => {
+            state.myPhotos.push(action.payload);
         },
-    }
-});
+        removePhoto: (state, action) => {
+            state.myPhotos.splice(action.payload, 1);
+        },
+        updatePhoto: (state, action) => {
+            state.myPhotos[action.payload.index] = action.payload.photo;
+        },
+    },
+})
 
-export const {actions} = myPhotosSlice;
+export const {
+    addPhoto,
+    removeOnePhoto, 
+    updatePhoto,
+    hydrateMyPhotos,
+} = myPhotosSlice.actions;
 
-export const downloadedPhotosReducer = myPhotosSlice.reducer;
+export const myPhotosReducer = myPhotosSlice.reducer;
 
 export default myPhotosSlice;
+
+export const myPhotosSelector = state => state.myPhotos.myPhotos;

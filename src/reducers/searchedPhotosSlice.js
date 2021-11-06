@@ -8,10 +8,7 @@ const searchedPhotosSlice = createSlice({
         isLoading: false,
         error: null
     },
-    reducers: {
-        hydrateSearchedPhotos: (action) => {
-           return action.payload;
-        },
+    reducers: { 
         searchedPhotosRequest: (state) => {
             state.isLoading = true;
         },
