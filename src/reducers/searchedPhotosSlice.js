@@ -5,8 +5,6 @@ const searchedPhotosSlice = createSlice({
     name: 'searchedPhotos',
     initialState: {
         searchedPhotos: [],
-        isLoading: false,
-        error: null
     },
     reducers: { 
         searchedPhotosRequest: (state) => {
@@ -14,16 +12,12 @@ const searchedPhotosSlice = createSlice({
         },
         searchedPhotosSuccess: (state, { payload } ) => {
             state.searchedPhotos = payload;
-            state.isLoading = false;
         },
         searchedPhotosFailure: (state, action) => {
-            state.isLoading = false;
             state.error = action.payload;
         }
     }
 });
-
-
 
 export function fetchPhotos(searchTerm) {
     return async (dispatch) => {

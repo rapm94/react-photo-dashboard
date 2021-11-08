@@ -53,7 +53,7 @@ export function SearchPage () {
                         <ImageListItemBar
                             title={image.id}
                             subtitle={image.alt}
-                            actionIcon={<Button variant='contained' style={{backgroundColor: image.color}} sx={{mx: 2}} onClick={() =>handleSavePhoto(image)}>Add to my photos</Button>}
+                            actionIcon={<Button variant='contained' style={{ backgroundColor: image.color}} sx={{mx: 2}} onClick={() =>handleSavePhoto(image)}>Add to my photos</Button>}
                         />
                     </ImageListItem>))}
                 </ImageList>
