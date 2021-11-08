@@ -13,9 +13,6 @@ const searchedPhotosSlice = createSlice({
         searchedPhotosSuccess: (state, { payload } ) => {
             state.searchedPhotos = payload;
         },
-        searchedPhotosFailure: (state, action) => {
-            state.error = action.payload;
-        }
     }
 });
 
@@ -27,7 +24,7 @@ export function fetchPhotos(searchTerm) {
             const data = await response.json();
             dispatch(searchedPhotosSlice.actions.searchedPhotosSuccess(data.results));
         } catch (error) {
-            dispatch(searchedPhotosSlice.actions.searchedPhotosFailure(error));
+            console.log(error);
         }
     }
 }

@@ -1,9 +1,11 @@
-import { Grid, ImageList, ImageListItem, ImageListItemBar, IconButton, Stack, Card, TextField } from '@mui/material';
+import { Grid, ImageList, ImageListItem, ImageListItemBar, IconButton, Stack, Card, TextField, Button, Box} from '@mui/material';
 import { useSelector } from 'react-redux';
 import { myPhotosSelector, removeOnePhoto } from '../reducers/myPhotosSlice';
 import { Delete, Edit, Download } from '@mui/icons-material';
 import { blue } from '@mui/material/colors';
 import { useDispatch } from 'react-redux';
+import { removeAllPhotos } from '../reducers/myPhotosSlice';
+
 
 
 export function MyPhotosPage() {
@@ -11,15 +13,25 @@ export function MyPhotosPage() {
     const dispatch = useDispatch();
     const myPhotos = useSelector(myPhotosSelector);
 
+
     const removeOnePhotoHandler = (id) => {
         dispatch(removeOnePhoto(id));
+    }
+
+    const removeAllPhotosHandler = () => {
+        dispatch(removeAllPhotos());
     }
 
     return (
         <>
             <Stack direction='row' separation={5}>
+                <Box>
+                <TextField />
+                </Box>
+                <Box mx={5}>
                 <TextField/>
-                <TextField/>
+                </Box>
+                <Button onClick={() => removeAllPhotosHandler()}>Delete all photos</Button>
             </Stack>
             <Grid>
                 <ImageList gap={20} cols={4} variant='quilted' rowHeight={ 300 }>

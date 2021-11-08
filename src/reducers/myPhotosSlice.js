@@ -35,6 +35,7 @@ const myPhotosSlice = createSlice({
         },
         removeAllPhotos: (state) => {
             state.myPhotos = [];
+            saveState(state);
         },
         updatePhoto: (state, action) => {
             state.myPhotos.myPhoyos[action.payload.index] = action.payload.photo;
@@ -46,6 +47,7 @@ export const {
     addPhoto,
     removeOnePhoto, 
     updatePhoto,
+    removeAllPhotos
 } = myPhotosSlice.actions;
 
 export const myPhotosReducer = myPhotosSlice.reducer;
