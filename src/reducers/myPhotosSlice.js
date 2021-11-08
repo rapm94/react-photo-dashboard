@@ -30,7 +30,8 @@ const myPhotosSlice = createSlice({
             saveState(state);
         },
         removeOnePhoto: (state, action) => {
-            state.myPhotos.filter(photo => photo.id !== action.payload);
+            state.myPhotos.splice(action.payload, 1);
+            saveState(state);
         },
         removeAllPhotos: (state) => {
             state.myPhotos = [];
