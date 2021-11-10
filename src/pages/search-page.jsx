@@ -9,14 +9,14 @@ import { useState } from 'react';
 
 export function SearchPage () {
 
+    
     const [ searchTerm, setSearchTerm ] = useState(''); 
     const searchedPhotos  = useSelector(photosSelector);
     const dispatch = useDispatch();
 
 
-    const handleSearch = (event) => {
-        console.log(event)
-        event.preventDefault();
+    const handleSearch = (e) => {
+        e.preventDefault();
         console.log(searchTerm);
         dispatch(fetchPhotos(searchTerm));
         
@@ -28,20 +28,23 @@ export function SearchPage () {
     }
 
     const handleChange = (event) => {
+        event.preventDefault();
         setSearchTerm(event.target.value);
     }
+
    
     return (
         <>
         <form onSubmit={handleSearch}>
         <Stack  direction='row' >
-            <Container sx={{ width: 1/3,  }}>
+            <Container sx={{ width: 1/3 }}>
              <TextField
                 id="search-field"
                 label="Search"
                 variant="outlined"
                 fullWidth
                 onChange={handleChange}
+                size='small'
             />
          </Container>        
           <Button

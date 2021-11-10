@@ -25,30 +25,51 @@ const myPhotosSlice = createSlice({
     name: 'myPhotos',
     initialState: loadState(),
     reducers: {
+        //Save a photo to the state and local storage{
         addPhoto: (state, action) => {
             state.myPhotos.push(action.payload);
             saveState(state);
         },
+        //Filter out the photo with the id that was passed in
         removeOnePhoto: (state, action) => {
-            state.myPhotos.splice(action.payload, 1);
+            state.myPhotos = state.myPhotos.filter(photo => photo.id !== action.payload);
             saveState(state);
-        },
+        }, 
+        //Remove all photos resetting the state to an empty array
         removeAllPhotos: (state) => {
             state.myPhotos = [];
             saveState(state);
         },
-        updatePhoto: (state, action) => {
-            state.myPhotos.myPhoyos[action.payload.index] = action.payload.photo;
+        //Change description of photo with the id that was passed in
+        changeDescription: (state, action) => {
+          const newPhotos =[];
+          
+            state.myPhotos.forEach(photo => {
+                if(photo.id === action.payload.id){
+                    newPhotos.push({...photo, alt_description: action.payload.description, description: action.payload.description});
+                } else {
+                    newPhotos.push(photo);
+                }
+            });
+            state.myPhotos = newPhotos;
+            saveState(state);
         },
-    },
-})
+        //Sort Photos by characteristics
+        sortPhotos: (state, action) => {
+            state.myPhotos.sort(function(a, b) {
+                if (a[action.payload] < b[action.payload]) {
+                    return -1;
+                }
+                if (a[action.payload] > b[action.payload]) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+    }
+});
 
-export const {
-    addPhoto,
-    removeOnePhoto, 
-    updatePhoto,
-    removeAllPhotos
-} = myPhotosSlice.actions;
+export const { addPhoto, removeOnePhoto, removeAllPhotos, changeDescription, sortPhotos } = myPhotosSlice.actions;
 
 export const myPhotosReducer = myPhotosSlice.reducer;
 
