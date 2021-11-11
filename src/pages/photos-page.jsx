@@ -1,4 +1,4 @@
-import { Grid, ImageList, ImageListItem, ImageListItemBar, IconButton, Stack, Card, TextField, Button, Box, Modal, Chip, List, Autocomplete } from '@mui/material';
+import { Grid, ImageList, ImageListItem, ImageListItemBar, IconButton, Stack, Card, TextField, Button, Box, Modal, Chip, List, Autocomplete, Paper } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { myPhotosSelector, removeOnePhoto, removeAllPhotos, changeDescription, sortPhotos} from '../reducers/myPhotosSlice';
 import { Delete, Edit, Download } from '@mui/icons-material';
@@ -65,41 +65,68 @@ export function MyPhotosPage() {
     }
 
     
-    const handleEdit = (event) => { 
+    const handleEdit = () => { 
         dispatch(changeDescription({id: editing, description: descriptionText}));
         setEditing(null)
     }
         
     //Handle sorting
     const handleSort = (event) => {
-        const sortBy = event.target.value;
-        dispatch(sortPhotos(sortBy));
+        event.preventDefault();
+        const sortBy = event.target.textContent;
+        console.log(sortBy);
+        dispatch(sortPhotos(sortBy.toLowerCase()));
     }
 
-    const sortingCharacteristics = {
-        WIDTH: 'width',
-        HEIGHT: 'height',
-        LIKES: 'likes',
+    const options = [
+        'Width',
+        'Height',
+        'Likes'
+    ]
+
+    //Handling chip searching
+    const handleChipClick = (event) => {    
+        const tag = event.target.textContent;
+        console.log(tag);
+        setSearchByDescription(tag);
     }
+    //Clearing chip searchintg
+    const handleClearChipSearch = () => { 
+        setSearchByDescription('');
+    }
+
     return (
         <>
-            <Stack direction='row' separation={ 5 }>
-                <Box>
-                <TextField placeholder='Search your photos...' onChange={ handleSearch } size='small'/>
-                </Box>
-                <Box mx={ 5 }>
-                <Autocomplete
-                  disablePortal
-                  options={sortingCharacteristics}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Movie" />}
-                />
-                </Box>
+            <Grid  separation={ 5 } justifyContent="center" >
+                <Stack direction='row'>
+                    <TextField placeholder='Search your photos...' onChange={ handleSearch } size='small' style={{width:300}}/>
+                        <Autocomplete
+                        disablePortal
+                        options={options}
+                        sx={{ width: 300 }}
+                        size='small'
+                        onChange={handleSort} 
+                        renderInput={(params) => <TextField {...params} label="Sort By..." />}
+                        />
+                </Stack>
+                <Paper component='ul' style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    flexWrap: "nowrap",
+                    listStyle: "none",
+                    margin: 0,
+                    overflow: "auto",
+                    maxWidth: "400px"
+                }}>
+                    <List style={{maxWidth: 750, position:'relative'}} >
+                      {tags.map((tag, index)  => (<Chip key={index} label={tag} sx={{m:0.5}} size='small' onClick={handleChipClick}/>))} 
+                    </List>
+                </Paper>
+            </Grid>
+            <Stack direction='row'>
                 <Button onClick={() => removeAllPhotosHandler()}>Delete all photos</Button>
-               <List style={{maxWidth: 750, position:'relative'}} >
-                  {tags.map((tag, index)  => (<Chip key={index} label={tag} sx={{m:0.5}} size='small'/>))} 
-               </List>
-                
+
+                <Button onClick={handleClearChipSearch}>Clear category</Button>
             </Stack>
             <Grid>
                 <ImageList gap={ 20 } cols={ 4 } variant='quilted' rowHeight={ 400 }>
@@ -117,7 +144,7 @@ export function MyPhotosPage() {
                             subtitle={ 
                             <ul>
                               <li>{image.description == null? image.alt_description : image.description}</li>
-                              <li>Size: {image.height}x{image.width}</li>
+                              <li>Size: h {image.height}x w {image.width}</li>
                               <li>Likes: {image.likes}</li>
                               <li>Created at: {image.created_at}</li>
                             </ul> }
@@ -145,7 +172,6 @@ export function MyPhotosPage() {
                     </ImageListItem>
                     ))}
                 </ImageList>
-
             </Grid>
             <Card/>
             <Modal

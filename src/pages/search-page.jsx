@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { TextField, ImageList, ImageListItem, ImageListItemBar, Button, Stack, Grid, Container,  } from '@mui/material';
+import { TextField, ImageList, ImageListItem, ImageListItemBar, Button, Stack, Grid, Container, Pagination  } from '@mui/material';
 import { photosSelector } from '../reducers/searchedPhotosSlice';
 import { fetchPhotos } from '../reducers/searchedPhotosSlice';
 import { addPhoto } from '../reducers/myPhotosSlice';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 export function SearchPage () {
 
-    
+    const [page, setPage] = useState(0);
     const [ searchTerm, setSearchTerm ] = useState(''); 
     const searchedPhotos  = useSelector(photosSelector);
     const dispatch = useDispatch();
@@ -17,9 +17,8 @@ export function SearchPage () {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        console.log(searchTerm);
+        console.log(searchTerm );
         dispatch(fetchPhotos(searchTerm));
-        
     }
 
     const handleSavePhoto = (image) => {
@@ -32,6 +31,14 @@ export function SearchPage () {
         setSearchTerm(event.target.value);
     }
 
+    const handlePageNumber = (event) => {
+        event.preventDefault();
+        const pageNumber = event.target.textContent;
+        setPage(pageNumber );
+        dispatch(fetchPhotos(searchTerm, pageNumber));
+    }
+
+   
    
     return (
         <>
@@ -56,7 +63,10 @@ export function SearchPage () {
 
         </Stack>
         </form>
-            <Grid>
+            <Stack>
+                <Pagination count={10} variant="outlined" shape="rounded" style={{ display: 'flex', justifyContent: 'center', m: 0.5}} onChange={handlePageNumber} />
+            </Stack>
+            <Grid >
                 <ImageList gap={20} cols={4} variant='quilted' rowHeight={ 300 }>
                     {searchedPhotos.map((image) => 
                     (<ImageListItem key={image.id}>

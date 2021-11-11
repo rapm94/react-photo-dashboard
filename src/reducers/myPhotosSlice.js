@@ -58,10 +58,10 @@ const myPhotosSlice = createSlice({
         sortPhotos: (state, action) => {
             state.myPhotos.sort(function(a, b) {
                 if (a[action.payload] < b[action.payload]) {
-                    return -1;
+                    return 1;
                 }
                 if (a[action.payload] > b[action.payload]) {
-                    return 1;
+                    return -1;
                 }
                 return 0;
             });
