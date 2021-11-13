@@ -24,8 +24,9 @@ import {
   sortPhotos,
 } from '../reducers/myPhotosSlice'
 import { Delete, Edit, Download } from '@mui/icons-material'
-import { blue } from '@mui/material/colors'
+import { blue, red } from '@mui/material/colors'
 import { useState } from 'react'
+import '../styles/CardComponent.scss'
 
 //Modal styling
 const style = {
@@ -45,6 +46,8 @@ export function MyPhotosPage() {
   const [descriptionText, setDescriptionText] = useState('')
   const [editing, setEditing] = useState(null)
   const [searchByDescription, setSearchByDescription] = useState('')
+  const [searchByTag, setSearchByTag] = useState('')
+  const [toggleChip, setToggleChip] = useState(false)
 
   //Redux state
   const dispatch = useDispatch()
@@ -95,7 +98,6 @@ export function MyPhotosPage() {
   const handleSort = (event) => {
     event.preventDefault()
     const sortBy = event.target.textContent
-    console.log(sortBy)
     dispatch(sortPhotos(sortBy.toLowerCase()))
   }
 
@@ -104,12 +106,12 @@ export function MyPhotosPage() {
   //Handling chip searching
   const handleChipClick = (event) => {
     const tag = event.target.textContent
-    console.log(tag)
-    setSearchByDescription(tag)
+    setSearchByTag(tag)
+    setToggleChip(!toggleChip)
   }
   //Clearing chip searchintg
   const handleClearChipSearch = () => {
-    setSearchByDescription('')
+    setSearchByTag('')
   }
 
   return (
@@ -145,48 +147,54 @@ export function MyPhotosPage() {
             }}
           >
             <List style={{ maxWidth: 750, position: 'relative' }}>
-              {tags.map((tag, index) => (
-                <Chip
-                  key={index}
-                  label={tag}
+              {tags.map((tag, index) =>   <Chip
+                  key={ index }
+                  label={ tag }
                   sx={{ m: 0.5 }}
                   size="small"
-                  onClick={handleChipClick}
-                />
-              ))}
+                  onClick= { handleChipClick }
+                  variant= { toggleChip && tag.includes(searchByTag) ? 'filled' : 'outlined' }
+                  color= { toggleChip && tag.includes(searchByTag) ? 'secondary' : 'primary' }
+                  disabled = { toggleChip && tag.includes(searchByTag) ? true : false }
+                /> 
+              )}
             </List>
           </Paper>
         </Stack>
       </Grid>
       <Stack direction="row">
-        <Button onClick={() => removeAllPhotosHandler()}>
-          Delete all photos
-        </Button>
+        <Button onClick={removeAllPhotosHandler}>Delete all photos</Button>
 
         <Button onClick={handleClearChipSearch}>Clear category</Button>
       </Stack>
       <Grid>
         <ImageList gap={20} cols={4} variant="quilted" rowHeight={400}>
           {myPhotos
-            .filter((image) =>
-              image.description
-                ? image.description.toLowerCase().includes(searchByDescription)
-                : image.alt_description
-                    .toLowerCase()
-                    .includes(searchByDescription),
-            )
+            .filter((image) => {
+              if (searchByDescription || searchByTag) {
+                const description = image.description
+                  ? image.description.toLowerCase()
+                  : image.alt_description.toLowerCase()
+                const tag = image.tags.map((tag) => tag.title.toLowerCase())
+                return (
+                  description.includes(searchByDescription) &&
+                  tag.includes(searchByTag)
+                )
+              } else {
+                return true
+              }
+            })
             .map((image) => (
               <ImageListItem key={image.id}>
                 <img src={image.urls.small} alt="" />
                 <ImageListItemBar
-                  title={image.id}
+                  title={
+                    image.description
+                      ? image.description
+                      : image.alt_description
+                  }
                   subtitle={
                     <ul>
-                      <li>
-                        {image.description == null
-                          ? image.alt_description
-                          : image.description}
-                      </li>
                       <li>
                         Size: h {image.height}x w {image.width}
                       </li>

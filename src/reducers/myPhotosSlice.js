@@ -25,11 +25,11 @@ const myPhotosSlice = createSlice({
   name: 'myPhotos',
   initialState: loadState(),
   reducers: {
-    //Save a photo to the state and local storage{
+   
     addPhoto: (state, action) => {
       state.myPhotos.push(action.payload)
-      saveState(state)
-    },
+      saveState(state)    
+    },      
     //Filter out the photo with the id that was passed in
     removeOnePhoto: (state, action) => {
       state.myPhotos = state.myPhotos.filter(

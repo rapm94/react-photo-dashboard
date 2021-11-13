@@ -1,16 +1,14 @@
-import Grid from '@mui/material/Grid'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
-import Container from '@mui/material/Container'
 import { Routes, Route, Link } from 'react-router-dom'
 import { SearchPage } from '../pages/search-page'
 import { MyPhotosPage } from '../pages/photos-page'
+import { CustomAppBar } from '../components/AppBar'
+import { Grid, Container, Stack, Button } from '@mui/material'
 
 function App() {
   return (
     <>
       <header>
-        <Grid container p={5}>
+      <Grid container p={5}>
           <Container>
             <Stack md={8}></Stack>
             <Stack direction="row" md={2} justifyContent="flex-end" spacing={8}>
