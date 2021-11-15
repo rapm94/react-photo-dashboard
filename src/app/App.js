@@ -1,31 +1,21 @@
-import { Routes, Route, Link } from 'react-router-dom'
-import { SearchPage } from '../pages/search-page'
-import { MyPhotosPage } from '../pages/photos-page'
-import { CustomAppBar } from '../components/AppBar'
-import { Grid, Container, Stack, Button } from '@mui/material'
+import { Routes, Route } from 'react-router-dom'
+import { SearchPage } from '../pages/SearchPhotosPage'
+import { MyPhotosPage } from '../pages/PhotosPage'
+import { CustomAppBar } from './../components/AppBar';
+import { RandomPhotosPage } from '../pages/RandomPhotosPage'
+
 
 function App() {
   return (
     <>
       <header>
-      <Grid container p={5}>
-          <Container>
-            <Stack md={8}></Stack>
-            <Stack direction="row" md={2} justifyContent="flex-end" spacing={8}>
-              <Link to="/">
-                <Button>Search</Button>
-              </Link>
-              <Link to="/my-photos">
-                <Button>My Photos</Button>
-              </Link>
-            </Stack>
-          </Container>
-        </Grid>
+        <CustomAppBar />
       </header>
       <body>
         <Routes>
           <Route path="/my-photos" element={<MyPhotosPage />} />
           <Route path="/" element={<SearchPage />} />
+          <Route path="/random-photos" element={<RandomPhotosPage />} />
         </Routes>
       </body>
     </>

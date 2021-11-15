@@ -2,11 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const loadState = () => {
   try {
-    const serializedState = localStorage.getItem('state')
-    if (serializedState === null) {
-      localStorage.setItem('state', JSON.stringify([]))
-    }
-    return JSON.parse(serializedState)
+    return localStorage.getItem('state') ? JSON.parse(localStorage.getItem('state')) : {myPhotos: [], myPhotosIds: {}};
   } catch (err) {
     return undefined
   }
@@ -25,21 +21,34 @@ const myPhotosSlice = createSlice({
   name: 'myPhotos',
   initialState: loadState(),
   reducers: {
-   
+
+    // add a photo to the list of photos and a reference to it in the list of ids, then save the state to local storage
     addPhoto: (state, action) => {
       state.myPhotos.push(action.payload)
-      saveState(state)    
-    },      
+      state.myPhotosIds[action.payload.id] = true
+      saveState(state)
+    },
+      
     //Filter out the photo with the id that was passed in
     removeOnePhoto: (state, action) => {
       state.myPhotos = state.myPhotos.filter(
         (photo) => photo.id !== action.payload,
+      );
+      state.myPhotosIds = Object.keys(state.myPhotosIds).reduce(
+        (acc, key) => {
+          if (key !== action.payload) {
+            acc[key] = true
+          }
+          return acc
+        },
+        {},
       )
       saveState(state)
     },
     //Remove all photos resetting the state to an empty array
     removeAllPhotos: (state) => {
       state.myPhotos = []
+      state.myPhotosIds = {}
       saveState(state)
     },
     //Change description of photo with the id that was passed in
@@ -88,3 +97,4 @@ export const myPhotosReducer = myPhotosSlice.reducer
 export default myPhotosSlice
 
 export const myPhotosSelector = (state) => state.myPhotos.myPhotos
+export const myPhotosIdsSelector = (state) => state.myPhotos.myPhotosIds

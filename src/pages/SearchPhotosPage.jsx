@@ -7,17 +7,19 @@ import {
   Button,
   Stack,
   Grid,
-  Container,
   Pagination,
   Snackbar,
   IconButton,
 } from '@mui/material'
-import { photosSelector, pageCountSelector } from '../reducers/searchedPhotosSlice'
+import {
+  photosSelector,
+  pageCountSelector,
+} from '../reducers/searchedPhotosSlice'
 import { fetchPhotos } from '../reducers/searchedPhotosSlice'
 import { addPhoto } from '../reducers/myPhotosSlice'
 import { invertColor } from '../helpers/invertColorHelper'
 import { useState } from 'react'
-import { myPhotosSelector } from './../reducers/myPhotosSlice'
+import { myPhotosIdsSelector } from '../reducers/myPhotosSlice'
 import CloseIcon from '@mui/icons-material/Close'
 
 export function SearchPage() {
@@ -30,20 +32,18 @@ export function SearchPage() {
   //Redux state
   const searchedPhotos = useSelector(photosSelector)
   const dispatch = useDispatch()
-  const myPhotos = useSelector(myPhotosSelector)
   const pageCount = useSelector(pageCountSelector)
+  const imagesIds = useSelector(myPhotosIdsSelector)
 
   //Search photos
   const handleSearch = (e) => {
     e.preventDefault()
     console.log(searchTerm)
     dispatch(fetchPhotos(searchTerm))
-    console.log()
   }
 
-  //Add photo to my photos
   const handleSavePhoto = (image) => {
-    if (myPhotos.includes(image)) {
+    if (imagesIds.hasOwnProperty(image.id)) {
       setImageAlreadySaved(true)
     } else {
       dispatch(addPhoto(image))
@@ -58,11 +58,9 @@ export function SearchPage() {
   }
 
   //Pagination
-  const handlePageNumber = (event) => {
-    event.preventDefault()
-    const pageNumber = event.target.textContent
-    setPage(pageNumber)
-    dispatch(fetchPhotos(searchTerm, pageNumber))
+  const handlePageNumber = (event, value) => {
+    setPage(value)
+    dispatch(fetchPhotos(searchTerm, value))
   }
 
   const handlePaginationToggle = () => {
@@ -75,6 +73,8 @@ export function SearchPage() {
           page={page}
           style={{ display: 'flex', justifyContent: 'center', m: 0.5 }}
           onChange={handlePageNumber}
+          hidePrevButton
+          hideNextButton
         />
       )
     } else {
@@ -82,84 +82,95 @@ export function SearchPage() {
     }
   }
 
-  const handleSnackbarType = () => { 
+  const handleSnackbarType = () => {
     if (imageAlreadySaved) {
       return (
         <Snackbar
-        open={imageAlreadySaved}
-        autoHideDuration={5000}
-        onClose={handleSnackBarClose}
-        message='Image already saved.'
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleSnackBarClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
-      ) 
-    } else { 
+          open={imageAlreadySaved}
+          autoHideDuration={2000}
+          onClose={handleAlreadySavedClose}
+          message="Image already saved."
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleAlreadySavedClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
+      )
+    } else {
       return (
         <Snackbar
-        open={imageSaved}
-        autoHideDuration={5000}
-        onClose={handleSnackBarClose}
-        message='Image saved!.'
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleSnackBarClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
+          open={imageSaved}
+          autoHideDuration={2000}
+          onClose={handleImageSavedClose}
+          message="Image saved!."
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleImageSavedClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
       )
     }
   }
 
-  const handleSnackBarClose = async () => {
-      await setImageAlreadySaved(false);
-      await setImageSaved(false)
-}
+  const handleImageSavedClose = () => {
+    setImageSaved(false)
+  }
+  const handleAlreadySavedClose = () => {
+    setImageAlreadySaved(false)
+  }
 
   return (
     <>
-      <form onSubmit={handleSearch}>
-        <Stack direction="row">
-          <Container sx={{ width: 1 / 3 }}>
+      <div style={{ marginTop: 100, marginBottom: 30 }}>
+        <form id="search-page-form" onSubmit={handleSearch}>
+          <Stack
+            direction="row"
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
             <TextField
               id="search-field"
-              label="Search"
+              label="Take a look"
               variant="outlined"
-              fullWidth
               onChange={handleChange}
               size="small"
+              style={{ width: 400, marginRight: 10, marginLeft: 10 }}
             />
-          </Container>
-          <Button
-            id="search-button"
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
-            Search
-          </Button>
-        </Stack>
-      </form>
+            <Button
+              id="search-button"
+              variant="contained"
+              color="primary"
+              type="submit"
+              style={{
+                boxShadow: 'none',
+                backgroundColor: '#f5f5f5',
+                color: '#000',
+              }}
+            >
+              Search
+            </Button>
+          </Stack>
+        </form>
+      </div>
 
       <Grid>
-        <ImageList gap={20} cols={4} variant="quilted" rowHeight={300}>
+        <ImageList gap={40} cols={4} variant="quilted" rowHeight={400}>
           {searchedPhotos.map((image) => (
             <ImageListItem key={image.id}>
               <img src={image.urls.regular} alt="" />
               <ImageListItemBar
+                style={{ height: 50, backgroundColor: 'transparent' }}
                 subtitle={image.alt}
                 actionIcon={
                   <Button
@@ -171,7 +182,7 @@ export function SearchPage() {
                     sx={{ mx: 2 }}
                     onClick={() => handleSavePhoto(image)}
                   >
-                    Add to my photos
+                    Add
                   </Button>
                 }
               />

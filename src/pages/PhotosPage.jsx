@@ -13,7 +13,6 @@ import {
   Chip,
   List,
   Autocomplete,
-  Paper,
 } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -23,10 +22,13 @@ import {
   changeDescription,
   sortPhotos,
 } from '../reducers/myPhotosSlice'
-import { Delete, Edit, Download } from '@mui/icons-material'
-import { blue, red } from '@mui/material/colors'
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Download as DownloadIcon,
+} from '@mui/icons-material'
+import { blue } from '@mui/material/colors'
 import { useState } from 'react'
-import '../styles/CardComponent.scss'
 
 //Modal styling
 const style = {
@@ -47,7 +49,6 @@ export function MyPhotosPage() {
   const [editing, setEditing] = useState(null)
   const [searchByDescription, setSearchByDescription] = useState('')
   const [searchByTag, setSearchByTag] = useState('')
-  const [toggleChip, setToggleChip] = useState(false)
 
   //Redux state
   const dispatch = useDispatch()
@@ -76,6 +77,8 @@ export function MyPhotosPage() {
   const removeAllPhotosHandler = () => {
     dispatch(removeAllPhotos())
   }
+
+  
   let tags = myPhotos.reduce(
     (prev, current) => [...prev, ...current.tags.map((tag) => tag.title)],
     [],
@@ -106,84 +109,83 @@ export function MyPhotosPage() {
   //Handling chip searching
   const handleChipClick = (event) => {
     const tag = event.target.textContent
-    setSearchByTag(tag)
-    setToggleChip(!toggleChip)
+   !searchByTag?  setSearchByTag(tag) : setSearchByTag('')
   }
-  //Clearing chip searchintg
-  const handleClearChipSearch = () => {
-    setSearchByTag('')
+
+  const toggleChip = () => {
+    if (tags.length > 0) {  
+    return (
+      <Stack
+        direction='row'
+          style={{
+            display: 'flex',
+            marginTop: 20,
+            maxWidth: 'auto',
+            justifyContent: 'center',
+          }}
+        >
+          <List style={{ justifyContent:'space-around' }}>
+            {tags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                sx={{ m: 0.5 }}
+                size="small"
+                onClick={handleChipClick}
+                variant={tag === searchByTag ? 'filled' : 'outlined'}
+                color={tag === searchByTag ? 'secondary' : 'primary'}
+              />
+            ))}
+          </List>
+        </Stack>
+    )
+    }
   }
 
   return (
     <>
-      <Grid separation={5} justifyContent="center">
-        <Stack direction="row" separation={5}>
-          <TextField
+      <Grid  style={{ marginTop: 100 }}>
+        <Stack
+          direction="row"
+          style={{ justifyContent: 'space-around', width: '100%' }}
+        >
+          <div style={{display: 'flex', justifyContent: 'space-around', width: '50%'}}>
+            <TextField
             placeholder="Search your photos..."
             onChange={handleSearch}
             size="small"
             style={{ width: 300 }}
           />
+          <div style={{display:'flex'}}>
           <Autocomplete
             disablePortal
             options={options}
-            sx={{ width: 300 }}
+            style={{ width: 200 }}
             size="small"
             onChange={handleSort}
             renderInput={(params) => (
               <TextField {...params} label="Sort By..." />
             )}
           />
-          <Paper
-            component="ul"
-            style={{
-              display: 'flex',
-              justifyContent: 'left',
-              flexWrap: 'nowrap',
-              listStyle: 'none',
-              margin: 0,
-              overflow: 'auto',
-              maxWidth: '600px',
-            }}
-          >
-            <List style={{ maxWidth: 750, position: 'relative' }}>
-              {tags.map((tag, index) =>   <Chip
-                  key={ index }
-                  label={ tag }
-                  sx={{ m: 0.5 }}
-                  size="small"
-                  onClick= { handleChipClick }
-                  variant= { toggleChip && tag.includes(searchByTag) ? 'filled' : 'outlined' }
-                  color= { toggleChip && tag.includes(searchByTag) ? 'secondary' : 'primary' }
-                  disabled = { toggleChip && tag.includes(searchByTag) ? true : false }
-                /> 
-              )}
-            </List>
-          </Paper>
+       <IconButton onClick={removeAllPhotosHandler}>
+          <DeleteIcon size='small' style={{color:'#333333'}}/>
+       </IconButton>  
+          </div>
+   
+          </div>
         </Stack>
+        {toggleChip()}
       </Grid>
-      <Stack direction="row">
-        <Button onClick={removeAllPhotosHandler}>Delete all photos</Button>
 
-        <Button onClick={handleClearChipSearch}>Clear category</Button>
-      </Stack>
       <Grid>
-        <ImageList gap={20} cols={4} variant="quilted" rowHeight={400}>
+        <ImageList gap={40} cols={4} variant="quilted" rowHeight={400}>
           {myPhotos
-            .filter((image) => {
-              if (searchByDescription || searchByTag) {
-                const description = image.description
-                  ? image.description.toLowerCase()
-                  : image.alt_description.toLowerCase()
-                const tag = image.tags.map((tag) => tag.title.toLowerCase())
-                return (
-                  description.includes(searchByDescription) &&
-                  tag.includes(searchByTag)
-                )
-              } else {
-                return true
-              }
-            })
+            .filter((image) => searchByTag ? image.tags.find((tag) => tag.title === searchByTag) : true)
+            .filter((image) => image.description
+            ? image.description.toLowerCase().includes(searchByDescription)
+            : image.alt_description
+                .toLowerCase()
+                .includes(searchByDescription))
             .map((image) => (
               <ImageListItem key={image.id}>
                 <img src={image.urls.small} alt="" />
@@ -208,15 +210,15 @@ export function MyPhotosPage() {
                         <IconButton
                           onClick={() => removeOnePhotoHandler(image.id)}
                         >
-                          <Delete style={{ color: blue[50] }} />
+                          <DeleteIcon style={{ color: blue[50] }} />
                         </IconButton>
                         <IconButton onClick={() => setEditing(image.id)}>
-                          <Edit style={{ color: blue[50] }} />
+                          <EditIcon style={{ color: blue[50] }} />
                         </IconButton>
                         <IconButton
                           onClick={() => onDownload(image.links.download)}
                         >
-                          <Download style={{ color: blue[50] }} />
+                          <DownloadIcon style={{ color: blue[50] }} />
                         </IconButton>
                       </Stack>
                     </div>
