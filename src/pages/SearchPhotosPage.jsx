@@ -14,29 +14,37 @@ import {
 import {
   photosSelector,
   pageCountSelector,
+  searchTermSelector,
+  pageNumberSelector
 } from '../reducers/searchedPhotosSlice'
 import { fetchPhotos } from '../reducers/searchedPhotosSlice'
 import { addPhoto } from '../reducers/myPhotosSlice'
 import { invertColor } from '../helpers/invertColorHelper'
 import { useState } from 'react'
-import { myPhotosIdsSelector } from '../reducers/myPhotosSlice'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { myPhotosSelector } from '../reducers/myPhotosSlice'
+import { myPhotosSelector, myPhotosIdsSelector } from '../reducers/myPhotosSlice'
 
 export function SearchPage() {
-  //Local state
-  const [page, setPage] = useState(0)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [imageAlreadySaved, setImageAlreadySaved] = useState(false)
-  const [imageSaved, setImageSaved] = useState(false)
 
-  //Redux state
-  const searchedPhotos = useSelector(photosSelector)
+
   const dispatch = useDispatch()
+    //Redux state
+  const searchedPhotos = useSelector(photosSelector)
+  const pageNumber = useSelector(pageNumberSelector)
   const pageCount = useSelector(pageCountSelector)
   const imagesIds = useSelector(myPhotosIdsSelector)
   const myPhotos = useSelector(myPhotosSelector)
+  const oldSearchTerm = useSelector(searchTermSelector)
+
+  //Local state
+  const [page, setPage] = useState(pageNumber? pageNumber : 0)
+  console.log(page)
+  const [searchTerm, setSearchTerm] = useState(oldSearchTerm? oldSearchTerm : '')
+  const [imageAlreadySaved, setImageAlreadySaved] = useState(false)
+  const [imageSaved, setImageSaved] = useState(false)
+
+
 
   //Search photos
   const handleSearch = (e) => {
@@ -136,7 +144,8 @@ export function SearchPage() {
   }
 
   const handleButtonToggle = (image) => {
-    if (!imagesIds.hasOwnProperty(image.id)) {
+    console.log(imagesIds)
+    if (!imagesIds[image.id]) {
       return (
         <Button
           variant="contained"

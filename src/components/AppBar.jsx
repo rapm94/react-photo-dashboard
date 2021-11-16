@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Typography, Fab, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import {Search as SearchIcon, Photo as PhotoIcon, Shuffle as ShuffleIcon  } from '@mui/icons-material';
+import {Search as SearchIcon, Photo as PhotoIcon, Shuffle as ShuffleIcon, GitHub as GitHubIcon  } from '@mui/icons-material';
 
 // import '../styles/AppBar.scss'
 
@@ -43,6 +43,11 @@ export function CustomAppBar(){
                         <ShuffleIcon fontSize='small' style={{color: '#333333'}} />
                     </Fab>
                 </Link>
+                <a href='https://github.com/rapm94/react-photo-dashboard.git'>
+                    <Fab  size='small' style={{boxShadow: 'none', backgroundColor: "#ffffff", height:30, width:38}}>
+                        <GitHubIcon size='small'/>
+                    </Fab>
+                </a>
                 </div>
                 
             </Toolbar>

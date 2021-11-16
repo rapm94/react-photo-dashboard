@@ -15,6 +15,7 @@ import { addPhoto } from '../reducers/myPhotosSlice'
 import ReactLoading from 'react-loading'
 import { myPhotosIdsSelector } from '../reducers/myPhotosSlice'
 import CloseIcon from '@mui/icons-material/Close'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 export function RandomPhotosPage() {
   const [photos, setPhotos] = useState([])
@@ -42,12 +43,7 @@ export function RandomPhotosPage() {
   }
 
   // add a tag array key to the image object, generated from description first word
-  function addTag(image) {
-    return {
-      ...image,
-      tag: [{ title: image.description.split(' ')[0] }],
-    }
-  }
+
   const handleImageSavedClose = () => {
     setImageSaved(false)
   }
@@ -97,6 +93,40 @@ export function RandomPhotosPage() {
     }
   }
 
+  const handleButtonToggle = (image) => {
+    console.log(imagesIds)
+    if (!imagesIds[image.id]) {
+      return (
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: image.color,
+            color: invertColor(image.color),
+          }}
+          sx={{ mx: 2 }}
+          onClick={() => handleSavePhoto(image)}
+        >
+          Add
+        </Button>
+      )
+    } else {
+      return (
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: image.color,
+            color: invertColor(image.color),
+          }}
+          sx={{ mx: 2 }}
+          onClick={() => handleSavePhoto(image)}
+          disabled
+        >
+          <CheckCircleIcon />
+        </Button>
+      )
+    }
+  }
+
   useEffect(() => {
     setPhotos(fetchPhotos())
   }, [])
@@ -105,7 +135,7 @@ export function RandomPhotosPage() {
     if (imagesIds.hasOwnProperty(image.id)) {
       setImageAlreadySaved(true)
     } else {
-      //TODO: dispatch(addPhoto(image))
+      dispatch(addPhoto({ ...image, tags: [], alt_description: '' }))
       setImageSaved(true)
     }
   }
@@ -151,19 +181,7 @@ export function RandomPhotosPage() {
                   <ImageListItemBar
                     style={{ height: 50, backgroundColor: 'transparent' }}
                     subtitle={image.alt}
-                    actionIcon={
-                      <Button
-                        variant="contained"
-                        style={{
-                          backgroundColor: image.color,
-                          color: invertColor(image.color),
-                        }}
-                        sx={{ mx: 2 }}
-                        onClick={() => handleSavePhoto(image)}
-                      >
-                        Add
-                      </Button>
-                    }
+                    actionIcon={handleButtonToggle(image)}
                   />
                 </ImageListItem>
               ))}
