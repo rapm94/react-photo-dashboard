@@ -21,6 +21,8 @@ import { invertColor } from '../helpers/invertColorHelper'
 import { useState } from 'react'
 import { myPhotosIdsSelector } from '../reducers/myPhotosSlice'
 import CloseIcon from '@mui/icons-material/Close'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { myPhotosSelector } from '../reducers/myPhotosSlice'
 
 export function SearchPage() {
   //Local state
@@ -34,6 +36,7 @@ export function SearchPage() {
   const dispatch = useDispatch()
   const pageCount = useSelector(pageCountSelector)
   const imagesIds = useSelector(myPhotosIdsSelector)
+  const myPhotos = useSelector(myPhotosSelector)
 
   //Search photos
   const handleSearch = (e) => {
@@ -46,6 +49,7 @@ export function SearchPage() {
     if (imagesIds.hasOwnProperty(image.id)) {
       setImageAlreadySaved(true)
     } else {
+      console.log(myPhotos)
       dispatch(addPhoto(image))
       setImageSaved(true)
     }
@@ -131,6 +135,39 @@ export function SearchPage() {
     setImageAlreadySaved(false)
   }
 
+  const handleButtonToggle = (image) => {
+    if (!imagesIds.hasOwnProperty(image.id)) {
+      return (
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: image.color,
+            color: invertColor(image.color),
+          }}
+          sx={{ mx: 2 }}
+          onClick={() => handleSavePhoto(image)}
+        >
+          Add
+        </Button>
+      )
+    } else {
+      return (
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: image.color,
+            color: invertColor(image.color),
+          }}
+          sx={{ mx: 2 }}
+          onClick={() => handleSavePhoto(image)}
+          disabled
+        >
+          <CheckCircleIcon />
+        </Button>
+      )
+    }
+  }
+
   return (
     <>
       <div style={{ marginTop: 100, marginBottom: 30 }}>
@@ -172,19 +209,7 @@ export function SearchPage() {
               <ImageListItemBar
                 style={{ height: 50, backgroundColor: 'transparent' }}
                 subtitle={image.alt}
-                actionIcon={
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: image.color,
-                      color: invertColor(image.color),
-                    }}
-                    sx={{ mx: 2 }}
-                    onClick={() => handleSavePhoto(image)}
-                  >
-                    Add
-                  </Button>
-                }
+                actionIcon={handleButtonToggle(image)}
               />
             </ImageListItem>
           ))}

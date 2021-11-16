@@ -111,7 +111,7 @@ export function RandomPhotosPage() {
   }
 
   const handleRandomize = () => {
-    //setPhotos(fetchPhotos())
+    setPhotos(fetchPhotos())
   }
 
   return (
